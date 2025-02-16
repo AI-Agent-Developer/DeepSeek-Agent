@@ -1,11 +1,11 @@
 {
-    "name": "ai",
-    "short_name": "ai",
+    "name": "AI智能体",
+    "short_name": "AI智能体",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "AI智能体 - DeepSeek Chat",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

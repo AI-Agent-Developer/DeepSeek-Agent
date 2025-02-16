@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'chat_message.dart';
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatProvider with ChangeNotifier {
   final List<Message> _messages = [];
@@ -10,8 +12,49 @@ class ChatProvider with ChangeNotifier {
   bool _isGenerating = false;
   bool get isGenerating => _isGenerating;
 
-  Future<void> sendMessage(String content) async {
+  Future<void> sendMessage(String content, BuildContext context) async {
     if (_isGenerating) return;
+    
+    // 检查 API Key
+    final prefs = await SharedPreferences.getInstance();
+    final apiKey = prefs.getString('api_key') ?? '';
+    
+    if (apiKey.isEmpty) {
+      // 显示对话框
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('需要 API Key'),
+            content: const Text('请先注册 DeepSeek API 服务并创建应用获取 API Key'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('取消'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  const url = 'https://ppinfra.com/user/register?invited_by=X4GPRK';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  }
+                },
+                child: const Text('去注册'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _showApiKeyDialog(context);
+                },
+                child: const Text('设置 API Key'),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
     
     _isGenerating = true;
     notifyListeners();
@@ -25,9 +68,6 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final apiKey = prefs.getString('api_key') ?? '';
-
       final request = http.Request(
         'POST',
         Uri.parse('https://api.ppinfra.com/v3/openai/chat/completions'),
@@ -95,6 +135,37 @@ class ChatProvider with ChangeNotifier {
     } finally {
       _isGenerating = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> _showApiKeyDialog(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final keyController = TextEditingController(text: prefs.getString('api_key') ?? '');
+
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('配置 API Key'),
+          content: TextField(
+            controller: keyController,
+            decoration: const InputDecoration(hintText: '输入你的 API Key'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await prefs.setString('api_key', keyController.text);
+                Navigator.pop(context);
+              },
+              child: const Text('保存'),
+            ),
+          ],
+        ),
+      );
     }
   }
 } 

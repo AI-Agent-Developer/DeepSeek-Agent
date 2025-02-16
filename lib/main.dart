@@ -4,14 +4,21 @@ import 'package:permission_handler/permission_handler.dart';
 import 'chat_screen.dart';
 import 'chat_provider.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();  // 确保Flutter绑定初始化
-  HttpOverrides.global = MyHttpOverrides();
   
-  // 在Android上请求存储权限
-  if (Platform.isAndroid) {
-    await requestStoragePermission();
+  if (kIsWeb) {
+    // Web 平台特定的初始化
+    // 可以在这里添加 web 平台的特殊处理
+  } else {
+    HttpOverrides.global = MyHttpOverrides();
+    
+    // 在Android上请求存储权限
+    if (Platform.isAndroid) {
+      await requestStoragePermission();
+    }
   }
   
   runApp(const MyApp());

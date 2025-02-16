@@ -183,7 +183,7 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_controller.text.trim().isEmpty) return;
     
     final chatProvider = context.read<ChatProvider>();
-    chatProvider.sendMessage(_controller.text.trim());
+    chatProvider.sendMessage(_controller.text.trim(), context);
     _controller.clear();
     _scrollToBottom();
   }

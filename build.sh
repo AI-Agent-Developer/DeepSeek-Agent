@@ -1,16 +1,23 @@
 #!/bin/bash
 
-# 清理旧的构建文件
-flutter clean
+# 构建web
+flutter build web --release --base-href "/ai/deepseek/"
 
-# 构建 macOS 通用二进制文件
-flutter build macos --release --no-tree-shake-icons
+# 构建macos
+if [ "$(uname)" == "Darwin" ]; then
+    flutter build macos --release
+fi
 
-# 输出目录
-OUTPUT_DIR="build/release"
-mkdir -p "$OUTPUT_DIR"
+# 构建ios
+# flutter build ios --release
 
-# 复制构建的应用到输出目录
-cp -r "build/macos/Build/Products/Release/AI智能体.app" "$OUTPUT_DIR/"
+# 构建android
+flutter build apk --release
 
-echo "构建完成！应用程序位于: $OUTPUT_DIR/AI智能体.app"
+# 构建linux
+# flutter build linux --release
+
+#如果当前是 windows 系统，则构建windows
+if [ "$(uname)" == "Windows" ]; then
+    flutter build windows --release
+fi
