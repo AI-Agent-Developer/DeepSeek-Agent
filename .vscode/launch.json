@@ -34,6 +34,23 @@
             "flutterMode": "release",
             "program": "lib/main.dart",
             "deviceId": "chrome"
-        }
+        },
+        {//android
+            "name": "ai (android)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "lib/main.dart",
+            "deviceId": "L2E0222401014490"
+
+        }, {//android
+        "name": "ai (android-debug)",
+        "request": "launch",
+        "type": "dart",
+        "flutterMode": "debug",
+        "program": "lib/main.dart",
+        "deviceId": "L2E0222401014490"
+
+    }
     ]
 }
