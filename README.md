@@ -1,16 +1,12 @@
-# ai
+# AI Agent
 
-A new Flutter project.
+使用文档: https://juejin.cn/post/7471662754210889778
 
-## Getting Started
+在线体验地址: http://rtcmedia.top:9090/ai/deepseek
 
-This project is a starting point for a Flutter application.
+Android 安装包下载地址: https://depyk-1256847675.cos.ap-beijing.myqcloud.com/AI/deepseek-agent/android/AI-DeepSeek-Agent.apk.zip
 
-A few resources to get you started if this is your first Flutter project:
+MacOS 安装包下载地址: https://depyk-1256847675.cos.ap-beijing.myqcloud.com/AI/deepseek-agent/mac/AI-DeepSeek-Agent.zip
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Windows 安装包下载地址: https://depyk-1256847675.cos.ap-beijing.myqcloud.com/AI/deepseek-agent/windows/AI-DeepSeek-Agent.exe.zip
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
