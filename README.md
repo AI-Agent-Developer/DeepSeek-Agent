@@ -8,5 +8,7 @@ Android 安装包下载地址: https://depyk-1256847675.cos.ap-beijing.myqcloud.
 
 MacOS 安装包下载地址: https://depyk-1256847675.cos.ap-beijing.myqcloud.com/AI/deepseek-agent/mac/AI-DeepSeek-Agent.zip
 
-Windows 安装包下载地址: https://depyk-1256847675.cos.ap-beijing.myqcloud.com/AI/deepseek-agent/windows/AI-DeepSeek-Agent.exe.zip
+Windows 安装包下载地址: https://depyk-1256847675.cos.ap-beijing.myqcloud.com/AI/deepseek-agent/windows/AI-DeepSeek-Agent.zip
+
+项目开源地址: https://github.com/AI-Agent-Developer/DeepSeek-Agent
 
