@@ -78,20 +78,43 @@ class ChatProvider with ChangeNotifier {
         'Authorization': 'Bearer $apiKey',
       });
 
+      // 构建消息历史
+      List<Map<String, dynamic>> messageHistory = [
+        // 添加 system 消息
+        {
+          'role': 'system',
+          'content': '你是一个全宇宙最聪明的AI智能体，你会以诚实专业的态度帮助用户，用中文回答问题。\n开启深度思考。请用"深度思考:"来表达你的内部推理过程，最终回复要简洁自然。\n'
+        }
+      ];
+
+      // 遍历所有消息构建历史记录
+      for (var i = 0; i < _messages.length - 1; i++) {  // -1 是因为最后一条是空的AI消息
+        Message msg = _messages[i];
+        String content = msg.content;
+        
+        // 如果是 AI 的回复，将"深度思考:"转换为 <think> 标签
+        // if (!msg.isUser) {
+        //   content = content.replaceAll('深度思考中...', '<think>');
+        //   content = content.replaceAll('深度思考完成', '</think>');
+        // }
+        
+        messageHistory.add({
+          'role': msg.isUser ? 'user' : 'assistant',
+          'content': content
+        });
+      }
+
       request.body = jsonEncode({
-        'model': 'deepseek/deepseek-v3/community',
-        'messages': [
-          {
-            'role': 'system',
-            'content': '你是全宇宙最聪明的 AI 助手，你会以诚实专业的态度帮助用户，用中文回答问题。\n开启深度思考。请用 <think> 和</think> 包裹你的内部推理过程，最终回复要简洁自然。\n',
-          },
-          {
-            'role': 'user',
-            'content': content,
-          }
-        ],
+        'model': 'deepseek/deepseek-r1/community',
+        'messages': messageHistory,
         'max_tokens': 10240,
-        'stream': true,
+        'frequency_penalty': 0,
+        'presence_penalty': 0,
+        'repetition_penalty': 1,
+        'temperature': 1,
+        'top_k': 50,
+        'top_p': 1,
+        'stream': true
       });
 
       final client = http.Client();
@@ -111,6 +134,11 @@ class ChatProvider with ChangeNotifier {
                     jsonData['choices'][0]['delta'] != null &&
                     jsonData['choices'][0]['delta']['content'] != null) {
                   var text = jsonData['choices'][0]['delta']['content'] as String;
+                  
+                  // 将 <think> 标签转换为"深度思考:"
+                  // text = text.replaceAll('<think>', '深度思考:');
+                  // text = text.replaceAll('</think>', '思考完成,开始回答问题\n\n');
+                  
                   buffer += text;
                   aiMessage.content = buffer;
                   notifyListeners();
