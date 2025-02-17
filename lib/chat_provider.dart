@@ -94,8 +94,8 @@ class ChatProvider with ChangeNotifier {
         
         // 如果是 AI 的回复，将"深度思考:"转换为 <think> 标签
         // if (!msg.isUser) {
-        //   content = content.replaceAll('深度思考中...', '<think>');
-        //   content = content.replaceAll('深度思考完成', '</think>');
+          content = content.replaceAll('已开启深度思考:', '<think>');
+          content = content.replaceAll('\n思考完成,开始回答问题:', '</think>');
         // }
         
         messageHistory.add({
@@ -136,8 +136,8 @@ class ChatProvider with ChangeNotifier {
                   var text = jsonData['choices'][0]['delta']['content'] as String;
                   
                   // 将 <think> 标签转换为"深度思考:"
-                  // text = text.replaceAll('<think>', '深度思考:');
-                  // text = text.replaceAll('</think>', '思考完成,开始回答问题\n\n');
+                  text = text.replaceAll('<think>', '已开启深度思考:');
+                  text = text.replaceAll('</think>', '\n思考完成,开始回答问题:');
                   
                   buffer += text;
                   aiMessage.content = buffer;

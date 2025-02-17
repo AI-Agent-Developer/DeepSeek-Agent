@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
 class Message {
@@ -32,6 +33,15 @@ class ChatMessage extends StatelessWidget {
     super.key,
     required this.message,
   });
+
+  String _getMessageContent() {
+    String content = message.content;
+    // 如果内容包含"思考完成,开始回答问题:"，只返回正文部分
+    if (content.contains('思考完成,开始回答问题:')) {
+      return content.split('思考完成,开始回答问题:')[1].trim();
+    }
+    return content;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +81,7 @@ class ChatMessage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (message.isUser)
-                    Text(
+                    SelectableText(
                       message.content,
                       style: const TextStyle(color: Colors.white),
                     )
@@ -82,9 +92,31 @@ class ChatMessage extends StatelessWidget {
                       child: CircularProgressIndicator(),
                     )
                   else
-                    Text(
-                      message.content,
-                      style: TextStyle(color: Colors.grey[800]),
+                    MarkdownWidget(
+                      data: message.content,
+                      config: MarkdownConfig(
+                        configs: [
+                          PreConfig(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.all(8),
+                          ),
+                          CodeConfig(
+                            style: TextStyle(
+                              backgroundColor: Colors.grey[300],
+                              fontFamily: 'monospace',
+                            ),
+                          ),
+                          PConfig(
+                            textStyle: TextStyle(
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ],
+                      ),
+                      shrinkWrap: true,
                     ),
                   if (!message.isComplete && !message.isUser)
                     Padding(
@@ -98,6 +130,39 @@ class ChatMessage extends StatelessWidget {
                         ),
                       ),
                     ),
+                  if (!message.isUser && message.isComplete) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildActionButton(
+                          icon: Icons.copy,
+                          label: '复制全部',
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(
+                              text: message.content,
+                            ));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('已复制全部内容')),
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        _buildActionButton(
+                          icon: Icons.copy_all,
+                          label: '复制正文',
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(
+                              text: _getMessageContent(),
+                            ));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('已复制正文内容')),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -114,6 +179,34 @@ class ChatMessage extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
